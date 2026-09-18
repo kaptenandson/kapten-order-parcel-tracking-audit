@@ -1,0 +1,22 @@
+# Standalone deployment definition: no public host port. Attach cloudflared later.
+services:
+  audit:
+    build: .
+    init: true
+    environment:
+      AUTH_MODE: access
+      NODE_ENV: production
+      APP_ORIGIN: ${APP_ORIGIN:?Set HTTPS application origin}
+      ACCESS_ISSUER: ${ACCESS_ISSUER:?Set Cloudflare team issuer}
+      ACCESS_AUDIENCE: ${ACCESS_AUDIENCE:?Set application audience}
+      PARCELLAB_API_KEY_HASHED: ${PARCELLAB_API_KEY_HASHED:-}
+    volumes:
+      - audit-data:/app/data
+    restart: unless-stopped
+volumes:
+  audit-data:
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${AUDIT_SUBNET:-10.253.119.0/24}

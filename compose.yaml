@@ -1,0 +1,21 @@
+services:
+  audit:
+    build: .
+    init: true
+    ports:
+      - "127.0.0.1:3100:3100"
+    environment:
+      AUTH_MODE: local
+      NODE_ENV: development
+      APP_ORIGIN: http://localhost:3100
+      PARCELLAB_API_KEY_HASHED: ${PARCELLAB_API_KEY_HASHED:-}
+    volumes:
+      - audit-data:/app/data
+    restart: unless-stopped
+volumes:
+  audit-data:
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${AUDIT_SUBNET:-10.253.119.0/24}
