@@ -43,7 +43,7 @@ The API independently verifies the Access JWT signature, issuer, audience and ex
 
 ## Development and verification
 
-Node 24+ required. `npm ci`, then:
+Node 24.22.1+ (or 26.12.1+) required; `.nvmrc` pins 24.22.1. `npm ci`, then:
 
 ```sh
 npm run typecheck
