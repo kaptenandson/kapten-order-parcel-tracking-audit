@@ -1,11 +1,13 @@
-FROM node:24.22.1-bookworm-slim AS build
+# Follows the Node 24 major tag on purpose: build with `--pull` so each build
+# gets the current 24.x patch.
+FROM node:24-bookworm-slim AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
 RUN npm run typecheck && npm run lint && npm test && npm run build
 RUN npm prune --omit=dev
-FROM node:24.22.1-bookworm-slim
+FROM node:24-bookworm-slim
 WORKDIR /app
 COPY --from=build /app/package*.json ./
 COPY --from=build /app/node_modules ./node_modules

@@ -5,8 +5,10 @@ A shared operational workspace for **Orders**, **Parcels**, and **Customer Reque
 ## Run locally
 
 ```sh
-docker compose up --build -d
+docker compose build --pull && docker compose up -d
 ```
+
+`--pull` fetches the current `node:24-bookworm-slim` base, so every build gets the latest Node 24 patch.
 
 Open **http://localhost:3100**. The default configuration binds only to the local machine and identifies edits as `local-developer`. Data lives in the `audit-data` named volume. Stopping or rebuilding the container does not remove it. Do not run `docker compose down -v` on a database you want to retain.
 
@@ -37,13 +39,13 @@ Default scope: AB creation dates 2026-08-01 through 2026-09-10 inclusive; projec
 
 ## Access deployment (later)
 
-Use `docker compose -f compose.access.yaml up --build -d` after configuring `APP_ORIGIN`, `ACCESS_ISSUER` and `ACCESS_AUDIENCE`. This separate definition publishes no host port. Connect Cloudflare Tunnel to the application on its private container network and put the full application hostname behind Cloudflare Access.
+Use `docker compose -f compose.access.yaml build --pull && docker compose -f compose.access.yaml up -d` after configuring `APP_ORIGIN`, `ACCESS_ISSUER` and `ACCESS_AUDIENCE`. This separate definition publishes no host port. Connect Cloudflare Tunnel to the application on its private container network and put the full application hostname behind Cloudflare Access.
 
 The API independently verifies the Access JWT signature, issuer, audience and expiry. Note attribution comes only from its validated identity. Browser writes must carry the configured same-origin header and application request header. There is no second app login, shared frontend API secret, or user administration. Every admitted employee has the same prototype permissions. Production mode refuses the local authentication bypass. Tunnel/DNS/policy provisioning is deliberately not performed by this project.
 
 ## Development and verification
 
-Node 24.22.1+ (or 26.12.1+) required; `.nvmrc` pins 24.22.1. `npm ci`, then:
+Node 24.22.1+ (or 26.12.1+) required; `.nvmrc` pins 24.22.1 locally, CI tests against the latest Node 24. `npm ci`, then:
 
 ```sh
 npm run typecheck
